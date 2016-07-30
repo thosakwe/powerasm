@@ -1,0 +1,55 @@
+// PowerASM aims to be the simplest possible high-level language above Assembly.
+// It deals solely with numbers. Semi-colons are optional.
+
+// There are only eight data types: i8, i16, i32 and i64, u8, u16, u32, u64.
+// The first four are signed, while the remaining four are not.
+// There are only a few possible literals: numbers and chars (which become i8).
+// Just for kicks, you can declare pointers to any of the four types. Pointers
+// become i32.
+
+decl i32 hConsole;
+
+// You can provide an initial value. Hexadecimal is supported.
+decl i8 twentyTwo 0x16;
+
+// You can also reassign symbols.
+set twentyTwo 'a';
+
+// PowerASM also allows you to create labels.
+getHandle {
+	// You can set a local symbol. This will not escape the current quote.
+	// Easily pop from stack, just specify a type.
+	local i32 type pop i32;
+
+	// You can call external symbols. Be advised that this can potentially
+	// undermine the portability of PowerASM if used.
+	push i32 type;
+	extern call GetStdHandle;
+
+	// You can return from a label.
+	return;
+}
+
+main {
+	// Locals do not have to have an initial value;
+	local i32 argc;
+	set argc pop i32;
+
+	// Assuming you have a symbol's offset or pointer, it can be de-referenced.
+	local i8** argv pop i32;
+	local i8* executablePath *(argv + 1);
+
+	// Calling PowerASM labels should be familiar to you.
+	// push, like pop, requires a type.
+	push i32 -11;
+	call getHandle;
+
+	// PowerASM allows you access registers. Prefix them with a type, and '$'.
+	set hConsole i32 $eax;
+
+	// In addition, you can obtain the offset of a symbol, similar to a pointer.
+	local i32* phConsole &hConsole;
+
+	// You can return with a value.
+	return i32 $eax;
+}
